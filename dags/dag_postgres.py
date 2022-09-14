@@ -4,6 +4,7 @@ from airflow.operators.postgres_operator import PostgresOperator
 from airflow.operators import PythonOperator
 from airflow.hooks.postgres_hook import PostgresHook
 import requests
+from sql_statements import sql_dict
 
 hook = PostgresHook(postgres_conn_id='postgres_my')
 
@@ -11,9 +12,7 @@ hook = PostgresHook(postgres_conn_id='postgres_my')
 def convert_data_non_usd():
     with hook.get_conn() as con:
         cur = con.cursor()
-        cur.execute("""SELECT *
-                        FROM orders
-                        WHERE currency = 'byn';""")
+        cur.execute(sql_dict['select_byn'])
         desc = cur.description
         column_names = [col[0] for col in desc]
         data = [dict(zip(column_names, row)) for row in cur.fetchall()]
@@ -36,10 +35,7 @@ def convert(data):
 def write_to_db(val):
     with hook.get_conn() as con:
         cur = con.cursor()
-        cur.execute("""
-        INSERT INTO sold (product_name, price, currency, purchase_date)
-        VALUES (%s, %s, %s, %s);
-        """, (val))
+        cur.execute(sql_dict['insert_converted'], (val))
 
 
 with DAG(
@@ -53,9 +49,7 @@ with DAG(
 ) as dag:
     task1 = PostgresOperator(
         task_id='Copy_el_BYN', postgres_conn_id='postgres_my', autocommit=False,
-        sql="""insert into sold(product_name,price,currency,purchase_date) 
-                    select product_name,price,currency,purchase_date FROM orders 
-                    WHERE currency = 'usd';""")
+        sql=sql_dict['copy_el_usd'])
 
     task2 = PythonOperator(task_id='convert_data_add_db',
                            python_callable=convert_data_non_usd)

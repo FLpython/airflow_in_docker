@@ -23,8 +23,8 @@ services:
         environment:
             - LOAD_EX=n
             - EXECUTOR=Local
-#            - FERNET_KEY=rkVf6byDor6ICiYIZz7NOZJqUoWcUEuIbdtmvE7ax-U
-#            - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+            - FERNET_KEY=ZRoCZNbNh4i_1nFB_LWBZPsfoKBCZnyNVYWO8RcLfHM=
+            - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
         logging:
             options:
                 max-size: 10m
