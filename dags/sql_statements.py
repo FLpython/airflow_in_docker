@@ -1,20 +1,22 @@
 create_table = """
         create table if not exists orders(
+        id serial,
         product_name varchar,
-        price real,
+        price numeric(6,2),
         currency varchar,
-        purchase_date varchar);INSERT INTO orders(product_name,price,currency,purchase_date)
-        VALUES ('acer',1540,'byn','02082022'),
-        ('toshiba',1890,'byn','28012022'),
-        ('hp',540,'usd','21062022'),
-        ('apple',1400,'usd','26022022');
-        create table if not exists sold(id serial primary key,
+        purchase_date date);INSERT INTO orders(product_name,price,currency,purchase_date)
+        VALUES ('acer',1540,'byn','08/02/2022'),
+        ('toshiba',1890,'byn','01/28/2022'),
+        ('hp',540,'usd','06/21/2022'),
+        ('apple',1400,'usd','02/26/2022');
+        create table if not exists sold(
+        id serial primary key,
         product_name varchar,
-        price real,
+        price numeric(6,2),
         currency varchar,
-        purchase_date varchar)"""
+        purchase_date date)"""
 
-select_byn = """SELECT * FROM orders WHERE currency = 'byn';"""
+select_byn = """SELECT product_name, price, currency, purchase_date FROM orders WHERE currency = 'byn';"""
 
 insert_converted = """INSERT INTO sold (product_name, price, currency, purchase_date) 
 VALUES (%s, %s, %s, %s);"""
